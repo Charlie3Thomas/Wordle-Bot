@@ -63,6 +63,8 @@ int main()
 		<< guess 
 		<< std::endl;
 	
+	//std::array<int, 5> comparison_result = compare(answer, guess);
+
 	std::array<int, 5> comparison_result = compare(answer, guess);
 
 	for (int i = 0; i < comparison_result.size(); i++)
@@ -79,7 +81,30 @@ int main()
 
 std::array<int, 5> compare(std::string _sol, std::string _sup)
 {
-	return std::array<int, 5> {0, 0, 0, 0, 0};
+	std::array<int, 5> _compare { 0, 0, 0, 0, 0 };
+
+	// Check for matching letters.
+	for (int sol = 0; sol < 5; sol++)
+	{
+		for (int sup = 0; sup < 5; sup++)
+		{
+			if (_sol[sol] == _sup[sup])
+			{
+				// If matching and in the same position.
+				if (sol == sup)
+				{
+					_compare[sup] = 2;
+				}
+				// If only matching.
+				else
+				{
+					_compare[sup] = 1;
+				}
+			}
+		}
+	}
+
+	return _compare;
 }
 
 void eliminate_supports(std::string _guess, std::array<int, 5> _result)
@@ -101,8 +126,6 @@ void eliminate_supports(std::string _guess, std::array<int, 5> _result)
 		if any position in _result contains 1, remove all words that do not contain those letters
 		if any position in _result contains 0, remove all words that contain those letters
 
-		For string.size -> loop through each char
-
-	
+		For string.size -> loop through each char	
 	*/
 }

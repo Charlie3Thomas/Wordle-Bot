@@ -62,10 +62,9 @@ int main()
 		<< "Support is: "
 		<< guess 
 		<< std::endl;
-	
-	//std::array<int, 5> comparison_result = compare(answer, guess);
 
 	std::array<int, 5> comparison_result = compare(answer, guess);
+	//std::array<int, 5> comparison_result = compare("abbaq", "babqx");
 
 	for (int i = 0; i < comparison_result.size(); i++)
 	{
@@ -90,17 +89,17 @@ std::array<int, 5> compare(std::string _sol, std::string _sup)
 		{
 			if (_sol[sol] == _sup[sup])
 			{
-				// If matching and in the same position.
-				if (sol == sup)
-				{
-					_compare[sup] = 2;
-				}
-				// If only matching.
-				else
-				{
-					_compare[sup] = 1;
-				}
+				_compare[sup] = 1;
 			}
+		}
+	}
+
+	// Check for matching letters in correct position.
+	for (int i = 0; i < 5; i++)
+	{
+		if (_sol[i] == _sup[i])
+		{
+			_compare[i] = 2;
 		}
 	}
 

@@ -6,7 +6,8 @@
 #include <random>
 
 std::array<int, 5> compare(std::string _sol, std::string _sup);
-void eliminate_supports(std::string _guess, std::array<int, 5> _result);
+
+void eliminate_supports(std::string _guess, std::array<int, 5> _result, std::vector<std::string>& _wordle_supports);
 
 int main()
 {
@@ -42,7 +43,6 @@ int main()
 
 	std::vector<int> wdl_sup(wordle_supports.size());
 
-
 	/*
 		Select a random solution and starting support.
 	*/
@@ -63,8 +63,8 @@ int main()
 		<< guess 
 		<< std::endl;
 
-	std::array<int, 5> comparison_result = compare(answer, guess);
 	//std::array<int, 5> comparison_result = compare("abbaq", "babqx");
+	std::array<int, 5> comparison_result = compare(answer, guess);
 
 	for (int i = 0; i < comparison_result.size(); i++)
 	{
@@ -72,8 +72,11 @@ int main()
 			<< comparison_result[i]
 			<< " ";
 	}
-
 	std::cout << std::endl;
+
+	std::cout << wordle_supports.size() << std::endl;
+	eliminate_supports(guess, comparison_result, wordle_supports);
+	std::cout << wordle_supports.size() << std::endl;
 
 	return 0;
 }
@@ -106,8 +109,10 @@ std::array<int, 5> compare(std::string _sol, std::string _sup)
 	return _compare;
 }
 
-void eliminate_supports(std::string _guess, std::array<int, 5> _result)
+void eliminate_supports(std::string _guess, std::array<int, 5> _result, std::vector<std::string>& _wordle_supports)
 {
+	std::string word;
+
 	/*
 		Example result 01002:
 			First letter is not used.
@@ -127,4 +132,60 @@ void eliminate_supports(std::string _guess, std::array<int, 5> _result)
 
 		For string.size -> loop through each char	
 	*/
+
+	// For each compare result in _result.
+	for (int i = 0; i < 5; i++)
+	{
+		// If the support word has a matching letter and place at this position.
+		if (_result[i] == 2)
+		{	
+			// Check all support words.
+			for (int w_sup = 0; w_sup < _wordle_supports.size(); w_sup++)
+			{
+				word = _wordle_supports[w_sup];
+
+				// Remove all support words that do not have that letter at that place.
+				if (word[_result[i]] != _guess[i])
+				{
+					_wordle_supports.erase(_wordle_supports.begin() + w_sup);
+				}
+			}
+		}
+		// If the support word has a matching letter at this position.
+		else if (_result[i] == 1)
+		{
+			// Check all support words.
+			for (int w_sup = 0; w_sup < _wordle_supports.size(); w_sup++)
+			{
+				word = _wordle_supports[w_sup];
+				bool valid_support = false;
+				for (int letter = 0; letter < 5; letter++)
+				{					
+					if (word[letter] == _guess[i])
+					{
+						// If any letter within the word matches, the support word is valid.
+						valid_support = true;
+					}
+				}
+				// Remove all support words that do not contain this letter.
+				if (!valid_support) { _wordle_supports.erase(_wordle_supports.begin() + w_sup); }
+			}
+		}
+		// If the support word has no matching letter at this position.
+		else if (_result[i] == 0)
+		{
+			for (int w_sup = 0; w_sup < _wordle_supports.size(); w_sup++)
+			{
+				word = _wordle_supports[w_sup];
+				for (int letter = 0; letter < 5; letter++)
+				{
+					if (word[letter] == _guess[i])
+					{
+						// If any letter within the word matches, the support word is invalid.
+						_wordle_supports.erase(_wordle_supports.begin() + w_sup);
+					}
+				}
+			}
+		}
+	}
 }
